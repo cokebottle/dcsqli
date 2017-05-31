@@ -6,7 +6,7 @@ import cookielib
 
 payload= ["'","x;ping -c 127.0.0.1","../../../../../../etc/passwd"]
 
-
+#Extract href
 def xtr_a(url):
         connection = urllib2.urlopen(url)
 	soup = BeautifulSoup(connection, "lxml")
@@ -15,14 +15,14 @@ def xtr_a(url):
 	for item in a:
 		link.append(url+item.get('href'))
 	return link
-
+#Extract url
 def xtr_form(url):
         connection = opener.open(url)
         soup = BeautifulSoup(connection, "lxml")
         a = soup.find_all('form')
         return a
 
-
+#Extract GET params
 def xtr_param(url):
         parsed = urlparse.urlparse(url)
         params = urlparse.parse_qsl(parsed.query)
@@ -35,6 +35,7 @@ def scan(url):
 	hrefs = xtr_a(url)
 	parsed = urlparse.urlparse(url)
 	target = []
+	#Testing for url parameters 
 	if len(params) != 0:
 		print "We have url parameters to be injected"
 		for k,v in params:
@@ -52,6 +53,7 @@ def scan(url):
 				print "vulnerable", elem
 	target_get = []
 	target_post = []
+	#Testing for forms
 	if len(forms) != 0:
 		for form in forms:
 			if form.get('method') == 'GET':
@@ -79,7 +81,7 @@ def scan(url):
 					output = resp.read()
 					if ('error' or 'ERROR' or 'root' or 'PING' or 'bytes') in output:
                                                 print "vulnerable", item
-
+	#Enumerating hrefs
 	if len(hrefs) != 0:
 		print "We have hrefs"
 		for item in hrefs:
